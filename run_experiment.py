@@ -128,14 +128,14 @@ tm = threading.Thread(target = main, name = 'main_thread)')
 stop_exp = threading.Thread(target = terminate, name = 'check_stop_thread)')
 
 stop_exp.start()
+tm.start()
 tv.start()
 tl.start()
-tm.start()
 
 stop_exp.join()
+tm.join()
 tv.join()
 tl.join()
-tm.join()
 
 ComPort.close()
 
@@ -155,7 +155,7 @@ f.close()
 # Features to add:
 # - mouse and channel selection
 # - time display
-
+#####
 
 # try:
 # 	while (True):
