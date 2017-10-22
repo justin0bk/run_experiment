@@ -1,4 +1,8 @@
 # convert digital input numbers into pulse TTLs and strobe TTLs
+# digital input data file comes in uint16 format
+# before using this function, use np.fromfile function,
+# specify the dtype = 'unit16'
+
 def dig2state(dig_in):
 	strobe_ttl = []
 	laser_ttl = []
