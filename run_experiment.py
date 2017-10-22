@@ -30,7 +30,8 @@ def run_laser():
 	current_time = time.time()
 
 	# Counts for delay before stimulation cycles begin
-	while current_time - start_time < delay and experiment_on:
+	while current_time - start_time < delay*60 and experiment_on:
+		time.sleep(0.001)
 		current_time = time.time()
 	
 	# Start Stimulation Cycles
@@ -72,6 +73,14 @@ isrdhopen = raw_input('Is rdh2000 interface open? (y/n) ')
 if isrdhopen == 'n':
 	subprocess.Popen([r"C:\Users\WeberChungPC_03\Documents\Software\RHD2000\RHD2000interface.exe"])
 	raw_input("Press Enter When You Complete the Acquisition Setting...\n")
+
+mouse_num = input('How many mice are you recording from? ')
+num_chans = []
+mouse_IDs = []
+for i in range(mouse_num):
+		num_chans.append(input('Specify number of channels for mouse #' + str(i+1) + ' '))
+		mouse_IDs.append(unicode.encode(raw_input('Specify ID for mouse #' + str(i+1) + ' ')))
+
 
 # Initiate Arduino
 ComPort = serial.Serial('COM5', rtscts = 0)
@@ -115,7 +124,7 @@ ComPort.write(bytearray(b'S\n'))
 start_time = time.time()
 experiment_on = True
 cam_on = True
-delay = 0
+delay = 0 # Set delay in minutes
 laser_on = False
 laser_dur = 120 # Set the laser durations in seconds
 exp_dur = 2 # Set the experiment duration in hours
@@ -145,6 +154,20 @@ f.write('SR:\t' + str(sr) + '\r\n')
 f.write('delay:\t' + str(delay) + '\r\n')
 f.write('laser_dur:\t' + str(laser_dur) + '\r\n')
 f.write('exp_dur:\t' + str(exp_dur) + '\r\n')
+f.write('mouse_ID:\t')
+for i in range(len(mouse_IDs)):
+	if i == len(mouse_IDs)-1:
+		f.write(mouse_IDs[i])
+	else:
+		f.write(mouse_IDs[i] + '\t')
+f.write('\r\n')
+f.write('num_chans:\t')
+for i in range(len(num_chans)):
+	if i == len(num_chans)-1:
+		f.write(str(num_chans[i]))
+	else:
+		f.write(str(num_chans[i]) + '\t')
+f.write('\r\n')
 f.close()
 
 
@@ -153,8 +176,9 @@ f.close()
 # variable that were changed: delay, stim_gap, laser_dur
 #####
 # Features to add:
-# - mouse and channel selection
+# - mouse and channel selection (DONE)
 # - time display
+# - overwrite or add new parameters txt file
 #####
 
 # try:
