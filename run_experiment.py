@@ -170,7 +170,6 @@ for i in range(len(num_chans)):
 f.write('\r\n')
 f.close()
 
-
 #####
 # NOTE:
 # variable that were changed: delay, stim_gap, laser_dur
