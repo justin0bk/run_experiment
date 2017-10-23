@@ -148,7 +148,7 @@ tl.join()
 
 ComPort.close()
 
-#Note parameters
+#Note parameters (currently overwrites preexisting parameter.txt file)
 f = open("parameter.txt","w+")
 f.write('SR:\t' + str(sr) + '\r\n')
 f.write('delay:\t' + str(delay) + '\r\n')
