@@ -86,7 +86,7 @@ for i in range(mouse_num):
 
 # Initiate Arduino
 ComPort = serial.Serial('COM5', rtscts = 0)
-ComPort2 = serial.Serial('COM5', rtscts = 0)
+ComPort2 = serial.Serial('COM6', rtscts = 0)
 
 # Initiate Camera Recording Setup
 bus = PyCapture2.BusManager()
