@@ -28,7 +28,7 @@ def run_laser():
 	global start_time
 	global delay #30*60 #30 minute delay before start
 	current_time = time.time()
-	stim_gap = np.random.uniform(5,15)*60
+	stim_gap = int(np.random.uniform(5,15)*60)
 	ComPort2.write(bytearray(b'M' + str(delay*60 + stim_gap) + '\n')) ####
 
 	# Counts for delay before stimulation cycles begin
