@@ -1,3 +1,6 @@
+//there are two things to edit (how to process when 'R' is passed and terminating when the experiment ends)
+//there should be some delay before passing "M"
+
 #include <LiquidCrystal.h>
 #include <Time.h>
 
