@@ -28,6 +28,8 @@ def run_laser():
 	global start_time
 	global delay #30*60 #30 minute delay before start
 	current_time = time.time()
+	stim_gap = np.random.uniform(5,15)*60
+	ComPort2.write(bytearray(b'M' + str(delay*60 + stim_gap) + '\n')) ####
 
 	# Counts for delay before stimulation cycles begin
 	while current_time - start_time < delay*60 and experiment_on:
@@ -36,14 +38,14 @@ def run_laser():
 	
 	# Start Stimulation Cycles
 	t_stimStart = time.time()
-	stim_gap = np.random.uniform(5,15)*60
 	while experiment_on:
 		if time.time()-t_stimStart >= stim_gap:
+			stim_gap = np.random.uniform(5,15)*60
 			ComPort.write(bytearray(b'R\n'))
+			ComPort2.write(bytearra(b'M' + str(laser_dur) + str(stim_gap)'\n')) ####
 			laser_on = True
 			time.sleep(laser_dur)
 			laser_on = False
-			stim_gap = np.random.uniform(5,15)*60
 			t_stimStart = time.time()
 		
 
@@ -84,6 +86,7 @@ for i in range(mouse_num):
 
 # Initiate Arduino
 ComPort = serial.Serial('COM5', rtscts = 0)
+ComPort2 = serial.Serial('COM5', rtscts = 0)
 
 # Initiate Camera Recording Setup
 bus = PyCapture2.BusManager()
@@ -120,16 +123,20 @@ avi = PyCapture2.AVIRecorder()
 title = unicode.encode((raw_input('Name Your Video File: ')))
 
 # Start Recording Data
-ComPort.write(bytearray(b'S\n'))
-start_time = time.time()
 experiment_on = True
 cam_on = True
 delay = 0 # Set delay in minutes
 laser_on = False
 laser_dur = 120 # Set the laser durations in seconds
-exp_dur = 2 # Set the experiment duration in hours
+exp_dur = 3 # Set the experiment duration in hours
 sr = 1000
 ComPort.write(bytearray('D' + str(laser_dur) + '\n'))
+ComPort2.write(bytearray('T' + str(exp_dur*60*60 + delay*60) + '\n'))
+time.sleep(1)
+
+ComPort.write(bytearray(b'S\n'))
+ComPort2.write(bytearray(b'S\n'))
+start_time = time.time()
 
 tv = threading.Thread(target = start_video, name = 'vid_thread')
 tl = threading.Thread(target = run_laser, name = 'laser_thread')
