@@ -42,7 +42,7 @@ def run_laser():
 		if time.time()-t_stimStart >= stim_gap:
 			stim_gap = np.random.uniform(5,15)*60
 			ComPort.write(bytearray(b'R\n'))
-			ComPort2.write(bytearray(b'M' + str(laser_dur) + str(stim_gap) + '\n')) ####
+			ComPort2.write(bytearray(b'M' + str(laser_dur + stim_gap) + '\n')) ####
 			laser_on = True
 			time.sleep(laser_dur)
 			laser_on = False
