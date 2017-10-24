@@ -29,7 +29,7 @@ def run_laser():
 	global delay #30*60 #30 minute delay before start
 	current_time = time.time()
 	stim_gap = int(np.random.uniform(5,15)*60)
-	ComPort2.write(bytearray(b'M' + str(delay*60 + stim_gap) + '\n')) ####
+	ComPort2.write(bytearray(b'M' + str(delay*60 + stim_gap) + '\n'))
 
 	# Counts for delay before stimulation cycles begin
 	while current_time - start_time < delay*60 and experiment_on:
@@ -42,7 +42,7 @@ def run_laser():
 		if time.time()-t_stimStart >= stim_gap:
 			stim_gap = int(np.random.uniform(5,15)*60)
 			ComPort.write(bytearray(b'R\n'))
-			ComPort2.write(bytearray(b'M' + str(laser_dur + stim_gap) + '\n')) ####
+			ComPort2.write(bytearray(b'M' + str(laser_dur + stim_gap) + '\n'))
 			laser_on = True
 			time.sleep(laser_dur)
 			laser_on = False
@@ -133,7 +133,7 @@ title = unicode.encode((raw_input('Name Your Video File: ')))
 # Start Recording Data
 experiment_on = True
 cam_on = True
-delay = 0 # Set delay in minutes
+delay = 30 # Set delay in minutes
 laser_on = False
 laser_dur = 120 # Set the laser durations in seconds
 exp_dur = 7 # Set the experiment duration in hours
@@ -191,8 +191,9 @@ f.close()
 #####
 # Features to add:
 # - mouse and channel selection (DONE)
-# - time display
+# - time display (DONE)
 # - overwrite or add new parameters txt file
+# - stop laser stimulation counting if less than 20 min remaining
 #####
 
 # try:
