@@ -123,7 +123,9 @@ void count_down() {
       }
     }
   }
-  lcd.print("Experiment Ended");
+  lcd.print("Experiment ended");
+  lcd.setCursor(0, 1);
+  lcd.print("Move avi & param");
 }
 void process_input2() {
   unsigned long lstart_ms = 0;
