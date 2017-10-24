@@ -51,7 +51,9 @@ def run_laser():
 
 # FUNCTION: Start Camera
 def start_video():
-	avi.MJPGOpen(title, frame_rate, 20)
+	global start_time
+	vid_num = 1
+	avi.MJPGOpen(title + str(vid_num), frame_rate, 20)
 	c.startCapture()
 	time.sleep(1) # Wait until camera powers on
 	c.writeRegister(pin2_strobecnt, StrobeOn)
@@ -60,9 +62,15 @@ def start_video():
 			image = c.retrieveBuffer()
 		except PyCapture2.Fc2error as fc2Err:
 			print "Error retrieving buffer : ", fc2Err
-			continue		
-		avi.append(image)
-		time.sleep(1.0/frame_rate)
+			continue
+		if time.time() - start_time	> 3*60*60:  # If the video goes over 3 hours, it automatically opens up a new file
+			vid_num += 1
+			avi.MJPGOpen(title + str(vid_num), frame_rate, 20)
+			avi.append(image)
+			time.sleep(1.0/frame_rate)
+		else:
+			avi.append(image)
+			time.sleep(1.0/frame_rate)
 	c.writeRegister(pin2_strobecnt, StrobeOff)
 	avi.close()
 	c.stopCapture()
@@ -128,7 +136,7 @@ cam_on = True
 delay = 0 # Set delay in minutes
 laser_on = False
 laser_dur = 120 # Set the laser durations in seconds
-exp_dur = 3 # Set the experiment duration in hours
+exp_dur = 7 # Set the experiment duration in hours
 sr = 1000
 ComPort.write(bytearray('D' + str(laser_dur) + '\n'))
 ComPort2.write(bytearray('T' + str(exp_dur*60*60 + delay*60) + '\n'))
@@ -156,7 +164,7 @@ tl.join()
 ComPort.close()
 
 #Note parameters (currently overwrites preexisting parameter.txt file)
-f = open("parameter.txt","w+")
+f = open(title + ".txt","w+")
 f.write('SR:\t' + str(sr) + '\r\n')
 f.write('delay:\t' + str(delay) + '\r\n')
 f.write('laser_dur:\t' + str(laser_dur) + '\r\n')
