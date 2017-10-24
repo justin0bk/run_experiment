@@ -40,7 +40,7 @@ def run_laser():
 	t_stimStart = time.time()
 	while experiment_on:
 		if time.time()-t_stimStart >= stim_gap:
-			stim_gap = np.random.uniform(5,15)*60
+			stim_gap = int(np.random.uniform(5,15)*60)
 			ComPort.write(bytearray(b'R\n'))
 			ComPort2.write(bytearray(b'M' + str(laser_dur + stim_gap) + '\n')) ####
 			laser_on = True
