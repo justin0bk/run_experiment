@@ -28,7 +28,9 @@ def run_laser():
 	global start_time
 	global delay #30*60 #30 minute delay before start
 	current_time = time.time()
-	stim_gap = int(np.random.uniform(5,15)*60)
+	gap_min = 5
+	gap_max = 15
+	stim_gap = int(np.random.uniform(gap_min,gap_max)*60)
 	ComPort2.write(bytearray(b'M' + str(delay*60 + stim_gap) + '\n'))
 
 	# Counts for delay before stimulation cycles begin
@@ -38,9 +40,9 @@ def run_laser():
 	
 	# Start Stimulation Cycles
 	t_stimStart = time.time()
-	while experiment_on:
-		if time.time()-t_stimStart >= stim_gap:
-			stim_gap = int(np.random.uniform(5,15)*60)
+	while time.time() - start_time < delay*60 + exp_dur*60*60 - gap_max*60  and experiment_on:
+		if time.time() - t_stimStart >= stim_gap:
+			stim_gap = int(np.random.uniform(gap_min,gap_max)*60)
 			ComPort.write(bytearray(b'R\n'))
 			ComPort2.write(bytearray(b'M' + str(laser_dur + stim_gap) + '\n'))
 			laser_on = True
@@ -133,6 +135,9 @@ StrobeOn = 0x82000000
 c.writeRegister(GPIO_pin2_setting, GPIO_pin2_outVal)
 c.writeRegister(pin2_strobecnt, StrobeOff)
 
+# Add comments before start
+comments = unicode.encode(raw_input('Any comments?'))
+
 # Opening AVI file to save images
 avi = PyCapture2.AVIRecorder()
 raw_input('Press enter when you are ready to begin')
@@ -191,6 +196,7 @@ for i in range(len(num_chans)):
 	else:
 		f.write(str(num_chans[i]) + '\t')
 f.write('\r\n')
+f.write('note:\t' + comments + '\t')
 f.close()
 
 #####
@@ -200,10 +206,10 @@ f.close()
 # Features to add:
 # - mouse and channel selection (DONE)
 # - time display (DONE)
-# - overwrite or add new parameters txt file
-# - stop laser stimulation counting if less than 20 min remaining
 # - title made automatically (DONE)
-# - add comments before experiment
+# - overwrite or add new parameters txt file (DONE)
+# - add comments before experiment (DONE)
+# - stop laser stimulation counting if less than 20 min remaining (DONE)
 # - add real-time video using matplotlib
 #####
 
