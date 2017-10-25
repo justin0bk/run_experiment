@@ -4,6 +4,7 @@ import PyCapture2
 import numpy as np
 import time
 import subprocess
+import matplotlib.pyplot as plt
 
 # FUNCTION: Run and Stop Experiment
 def main():
@@ -54,6 +55,7 @@ def run_laser():
 # FUNCTION: Start Camera
 def start_video():
 	global start_time
+	global image 
 	vid_num = 1
 	avi.MJPGOpen(title + str(vid_num), frame_rate, 20)
 	c.startCapture()
@@ -77,6 +79,13 @@ def start_video():
 	avi.close()
 	c.stopCapture()
 	c.disconnect()
+
+# def plt_playback():
+# 	while cam_on:
+# 		if bool(image):
+# 			imgdat = image.getData()
+# 			imgnp = imgnp = np.array(imgdat).reshape(image.getRows(),image.getCols())
+# 			plt.imshow(imgnp)
 
 
 ####################################################################################
@@ -150,6 +159,10 @@ laser_on = False
 laser_dur = 120 # Set the laser durations in seconds
 exp_dur = 7 # Set the experiment duration in hours
 sr = 1000
+
+image = 0
+plt.ion()
+
 ComPort.write(bytearray('D' + str(laser_dur) + '\n'))
 ComPort2.write(bytearray('T' + str(exp_dur*60*60 + delay*60) + '\n'))
 time.sleep(1)
@@ -162,16 +175,19 @@ tv = threading.Thread(target = start_video, name = 'vid_thread')
 tl = threading.Thread(target = run_laser, name = 'laser_thread')
 tm = threading.Thread(target = main, name = 'main_thread)')
 stop_exp = threading.Thread(target = terminate, name = 'check_stop_thread)')
+# run_rt = threading.Thread(target = plt_playback, name = 'rt_playback')
 
 stop_exp.start()
 tm.start()
 tv.start()
 tl.start()
+# run_rt.start()
 
 stop_exp.join()
 tm.join()
 tv.join()
 tl.join()
+# run_rt.join()
 
 ComPort.close()
 ComPort2.close()
@@ -211,31 +227,5 @@ f.close()
 # - add comments before experiment (DONE)
 # - stop laser stimulation counting if less than 20 min remaining (DONE)
 # - add real-time video using matplotlib
+# - real-time spectrogram
 #####
-
-# try:
-# 	while (True):
-# 		val_in = input('Please write your command (ex. '"'R'"' = Run, '"'L#'"'(ms) = Low, '"'H#'"'(ms) = High,'"'D#'"'(s) = Dur)  ')
-# 		print(val_in+'\n')
-# 		data = bytearray(val_in +'\n')
-# 		ComPort.write(data)
-# except KeyboardInterrupt:
-# 	print("stop")
-
-# Initiate Laser Pulse Setup
-# print('If you want to skip parameter setting, please press Enter')
-# dur_in = unicode.encode((raw_input('Set Laser Duration (ex. type D10 for 10 second duration):')))
-# if dur_in is not '':
-# 	ComPort.write(bytearray(dur_in + '\n'))
-# hi_in = unicode.encode((raw_input('Set Laser High (ex. type H10 for 10 millisecond duration):')))
-# if hi_in is not '':
-# 	ComPort.write(bytearray(hi_in + '\n'))
-# lo_in = unicode.encode((raw_input('Set Laser Low (ex. type L10 for 10 millisecond duration):')))
-# if hi_in is not '':
-
-# ComPort.write(bytearray('D' + str(laser_dur) + '\n')) #20'))
-
-
-
-
-
