@@ -19,7 +19,7 @@ def main():
 def terminate():
 	global experiment_on
 	global cam_on
-	raw_input('Press Enter to Stop Recording')
+	raw_input('Press enter to stop recording')
 	experiment_on = False
 	cam_on = False
 
@@ -87,9 +87,16 @@ if isrdhopen == 'n':
 mouse_num = input('How many mice are you recording from? ')
 num_chans = []
 mouse_IDs = []
+title = ''
 for i in range(mouse_num):
 		num_chans.append(input('Specify number of channels for mouse #' + str(i+1) + ' '))
-		mouse_IDs.append(unicode.encode(raw_input('Specify ID for mouse #' + str(i+1) + ' ')))
+		mouse_name = unicode.encode(raw_input('Specify ID for mouse #' + str(i+1) + ' '))
+		mouse_IDs.append(mouse_name)
+		title += mouse_name
+
+title += '_' + str(time.localtime().tm_mon)
+title += str(time.localtime().tm_mday)
+title += str(time.localtime().tm_year)[2:4] + '_'
 
 
 # Initiate Arduino
@@ -128,7 +135,7 @@ c.writeRegister(pin2_strobecnt, StrobeOff)
 
 # Opening AVI file to save images
 avi = PyCapture2.AVIRecorder()
-title = unicode.encode((raw_input('Name Your Video File: ')))
+raw_input('Press enter when you are ready to begin')
 
 # Start Recording Data
 experiment_on = True
@@ -162,6 +169,7 @@ tv.join()
 tl.join()
 
 ComPort.close()
+ComPort2.close()
 
 #Note parameters (currently overwrites preexisting parameter.txt file)
 f = open(title + ".txt","w+")
@@ -194,6 +202,9 @@ f.close()
 # - time display (DONE)
 # - overwrite or add new parameters txt file
 # - stop laser stimulation counting if less than 20 min remaining
+# - title made automatically (DONE)
+# - add comments before experiment
+# - add real-time video using matplotlib
 #####
 
 # try:
