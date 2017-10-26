@@ -5,13 +5,14 @@ import numpy as np
 import time
 import subprocess
 import matplotlib.pyplot as plt
+import pyqtgraph as pg
 
 # FUNCTION: Run and Stop Experiment
 def main():
 	global cam_on
 	global start_time
 	current_time = time.time()
-	while current_time-start_time < exp_dur*60*60 and experiment_on:
+	while current_time-start_time < delay*60 + exp_dur*60*60 and experiment_on:
 		time.sleep(0.001)
 		current_time = time.time()
 	ComPort.write(bytearray(b'E\n'))
@@ -28,9 +29,9 @@ def terminate():
 def run_laser():
 	global start_time
 	global delay #30*60 #30 minute delay before start
+	global gap_min
+	global gap_max
 	current_time = time.time()
-	gap_min = 5
-	gap_max = 15
 	stim_gap = int(np.random.uniform(gap_min,gap_max)*60)
 	ComPort2.write(bytearray(b'M' + str(delay*60 + stim_gap) + '\n'))
 
@@ -50,6 +51,10 @@ def run_laser():
 			time.sleep(laser_dur)
 			laser_on = False
 			t_stimStart = time.time()
+		# Hi, I've added this line, perhaps it helps at bit
+		# with memory
+		else:
+			time.sleep(0.001)
 		
 
 # FUNCTION: Start Camera
@@ -60,6 +65,7 @@ def start_video():
 	avi.MJPGOpen(title + str(vid_num), frame_rate, 20)
 	c.startCapture()
 	time.sleep(1) # Wait until camera powers on
+	vid_start_time = time.time()
 	c.writeRegister(pin2_strobecnt, StrobeOn)
 	while cam_on is True:
 		try:
@@ -67,13 +73,18 @@ def start_video():
 		except PyCapture2.Fc2error as fc2Err:
 			print "Error retrieving buffer : ", fc2Err
 			continue
-		if time.time() - start_time	> 3*60*60:  # If the video goes over 3 hours, it automatically opens up a new file
+		if time.time() - vid_start_time	> 3*60*60:  # If the video goes over 3 hours, it automatically opens up a new file
+			avi.close()
 			vid_num += 1
+			vid_start_time = time.time()
 			avi.MJPGOpen(title + str(vid_num), frame_rate, 20)
 			avi.append(image)
 			time.sleep(1.0/frame_rate)
 		else:
 			avi.append(image)
+			imgdat = image.getData()
+			imgnp = imgnp = np.array(imgdat).reshape(image.getRows(),image.getCols())
+			imv.setImage(imgnp)
 			time.sleep(1.0/frame_rate)
 	c.writeRegister(pin2_strobecnt, StrobeOff)
 	avi.close()
@@ -149,6 +160,8 @@ comments = unicode.encode(raw_input('Any comments?'))
 
 # Opening AVI file to save images
 avi = PyCapture2.AVIRecorder()
+# imv = pg.ImageView()
+# imv.show()
 raw_input('Press enter when you are ready to begin')
 
 # Start Recording Data
@@ -157,11 +170,13 @@ cam_on = True
 delay = 30 # Set delay in minutes
 laser_on = False
 laser_dur = 120 # Set the laser durations in seconds
-exp_dur = 7 # Set the experiment duration in hours
+exp_dur = 5 # Set the experiment duration in hours
+gap_min = 5
+gap_max = 15
 sr = 1000
 
-image = 0
-plt.ion()
+# image = 0
+# plt.ion()
 
 ComPort.write(bytearray('D' + str(laser_dur) + '\n'))
 ComPort2.write(bytearray('T' + str(exp_dur*60*60 + delay*60) + '\n'))
@@ -229,3 +244,10 @@ f.close()
 # - add real-time video using matplotlib
 # - real-time spectrogram
 #####
+# - channel allocation
+# - does changing channel order help?
+# - laser dial number, type of laser
+
+# Suggestions:
+# could you put the variable initiation of gap_min and gap_max
+# near exp_dur, as we might ofter want to change this parameter
