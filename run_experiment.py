@@ -82,9 +82,9 @@ def start_video():
 			time.sleep(1.0/frame_rate)
 		else:
 			avi.append(image)
-			imgdat = image.getData()
-			imgnp = imgnp = np.array(imgdat).reshape(image.getRows(),image.getCols())
-			imv.setImage(imgnp)
+			# imgdat = image.getData()
+			# imgnp = imgnp = np.array(imgdat).reshape(image.getRows(),image.getCols())
+			# imv.setImage(imgnp)
 			time.sleep(1.0/frame_rate)
 	c.writeRegister(pin2_strobecnt, StrobeOff)
 	avi.close()
