@@ -250,4 +250,3 @@ f.close()
 
 # Suggestions:
 # could you put the variable initiation of gap_min and gap_max
-# near exp_dur, as we might ofter want to change this parameter (DONE)
