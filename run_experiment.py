@@ -31,6 +31,7 @@ def run_laser():
 	global delay #30*60 #30 minute delay before start
 	global gap_min
 	global gap_max
+	time_total = delay*60 + exp_dur*60*60
 	current_time = time.time()
 	stim_gap = int(np.random.uniform(gap_min,gap_max)*60)
 	ComPort2.write(bytearray(b'M' + str(delay*60 + stim_gap) + '\n'))
@@ -42,17 +43,16 @@ def run_laser():
 	
 	# Start Stimulation Cycles
 	t_stimStart = time.time()
-	while time.time() - start_time < delay*60 + exp_dur*60*60 - gap_max*60  and experiment_on:
+	while time.time() - start_time < time_total - gap_max*60  and experiment_on:
 		if time.time() - t_stimStart >= stim_gap:
-			stim_gap = int(np.random.uniform(gap_min,gap_max)*60)
 			ComPort.write(bytearray(b'R\n'))
-			ComPort2.write(bytearray(b'M' + str(laser_dur + stim_gap) + '\n'))
 			laser_on = True
 			time.sleep(laser_dur)
 			laser_on = False
+			stim_gap = int(np.random.uniform(gap_min,gap_max)*60)
+			if time.time() - start_time < time_total - 25*60:
+				ComPort2.write(bytearray(b'M' + str(stim_gap) + '\n'))
 			t_stimStart = time.time()
-		# Hi, I've added this line, perhaps it helps at bit
-		# with memory
 		else:
 			time.sleep(0.001)
 		
@@ -82,9 +82,9 @@ def start_video():
 			time.sleep(1.0/frame_rate)
 		else:
 			avi.append(image)
-			imgdat = image.getData()
-			imgnp = imgnp = np.array(imgdat).reshape(image.getRows(),image.getCols())
-			imv.setImage(imgnp)
+			# imgdat = image.getData()
+			# imgnp = imgnp = np.array(imgdat).reshape(image.getRows(),image.getCols())
+			# imv.setImage(imgnp)
 			time.sleep(1.0/frame_rate)
 	c.writeRegister(pin2_strobecnt, StrobeOff)
 	avi.close()
@@ -111,7 +111,7 @@ num_chans = []
 mouse_IDs = []
 title = ''
 for i in range(mouse_num):
-		num_chans.append(input('Specify number of channels for mouse #' + str(i+1) + ' '))
+		num_chans.append(unicode.encode(raw_input('Specify channels for mouse #' + str(i+1) + ' (ex. MMEE) ')))
 		mouse_name = unicode.encode(raw_input('Specify ID for mouse #' + str(i+1) + ' '))
 		mouse_IDs.append(mouse_name)
 		title += mouse_name
@@ -164,7 +164,7 @@ avi = PyCapture2.AVIRecorder()
 # imv.show()
 raw_input('Press enter when you are ready to begin')
 
-# Start Recording Data
+# Start Recording Data (Parameter setting)
 experiment_on = True
 cam_on = True
 delay = 30 # Set delay in minutes
@@ -179,7 +179,7 @@ sr = 1000
 # plt.ion()
 
 ComPort.write(bytearray('D' + str(laser_dur) + '\n'))
-ComPort2.write(bytearray('T' + str(exp_dur*60*60 + delay*60) + '\n'))
+ComPort2.write(bytearray('T' + str(exp_dur*60*60 + delay*60 - 10) + '\n'))
 time.sleep(1)
 
 ComPort.write(bytearray(b'S\n'))
@@ -220,7 +220,7 @@ for i in range(len(mouse_IDs)):
 	else:
 		f.write(mouse_IDs[i] + '\t')
 f.write('\r\n')
-f.write('num_chans:\t')
+f.write('ch_alloc:\t')
 for i in range(len(num_chans)):
 	if i == len(num_chans)-1:
 		f.write(str(num_chans[i]))
