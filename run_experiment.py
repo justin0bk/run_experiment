@@ -227,7 +227,7 @@ for i in range(len(num_chans)):
 	else:
 		f.write(str(num_chans[i]) + '\t')
 f.write('\r\n')
-f.write('note:\t' + comments + '\t')
+f.write('#note:\t' + comments + '\t')
 f.close()
 
 #####
@@ -244,10 +244,10 @@ f.close()
 # - add real-time video using matplotlib
 # - real-time spectrogram
 #####
-# - channel allocation
+# - channel allocation (DONE)
 # - does changing channel order help?
 # - laser dial number, type of laser
 
 # Suggestions:
 # could you put the variable initiation of gap_min and gap_max
-# near exp_dur, as we might ofter want to change this parameter
+# near exp_dur, as we might ofter want to change this parameter (DONE)
