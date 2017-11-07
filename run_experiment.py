@@ -1,3 +1,6 @@
+import shutil #for moving files
+import os
+import glob
 import serial   
 import threading
 import PyCapture2
@@ -117,7 +120,16 @@ for i in range(mouse_num):
 		title += mouse_name
 
 title += '_' + str(time.localtime().tm_mon)
-title += str(time.localtime().tm_mday)
+todayis = str(time.localtime().tm_year)[2:4]
+todayis += str(time.localtime().tm_mon)
+
+if len(str(time.localtime().tm_mday)) < 2:
+	title += '0' + str(time.localtime().tm_mday)
+	todayis += '0' + str(time.localtime().tm_mday)
+else:
+	title += str(time.localtime().tm_mday)
+	todayis += str(time.localtime().tm_mday)
+
 title += str(time.localtime().tm_year)[2:4] + '_'
 
 
@@ -170,7 +182,7 @@ cam_on = True
 delay = 20 #Set delay in minutes
 laser_on = False
 laser_dur = 120 # Set the laser durations in seconds
-exp_dur = 5  # Set the experiment duration in hours
+exp_dur = 7  # Set the experiment duration in hours
 gap_min = 15
 gap_max = 25
 sr = 1000
@@ -229,6 +241,16 @@ for i in range(len(num_chans)):
 f.write('\r\n')
 f.write('#note:\t' + comments + '\t')
 f.close()
+
+# # Move files to recording folder
+# raw_input("Enter to move files")
+# save_dir = "C:\Users\WeberChungPC_03\Documents\Data\RawData"
+# curr_dir = "C:\Users\WeberChungPC_03\Documents\Data\Programming\\run_experiment"
+# all_files = glob.glob("*" + title + "*")
+# for fs in os.listdir(save_dir):
+# 	if fs.startswith('SleepRecording_' + todayis):
+# 		for fm in all_files:
+# 			shutil.move(curr_dir + "\\" + fm, save_dir + "\\" + fs + "\\" + fm)
 
 #####
 # NOTE:
