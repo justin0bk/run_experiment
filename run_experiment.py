@@ -167,12 +167,12 @@ raw_input('Press enter when you are ready to begin')
 # Start Recording Data (Parameter setting)
 experiment_on = True
 cam_on = True
-delay = 30 # Set delay in minutes
+delay = 20 #Set delay in minutes
 laser_on = False
 laser_dur = 120 # Set the laser durations in seconds
-exp_dur = 5 # Set the experiment duration in hours
-gap_min = 5
-gap_max = 15
+exp_dur = 5  # Set the experiment duration in hours
+gap_min = 15
+gap_max = 25
 sr = 1000
 
 # image = 0
