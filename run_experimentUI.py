@@ -285,7 +285,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Run Experiment"))
         self.start_exp.setText(_translate("MainWindow", "Start"))
         self.stop_exp.setText(_translate("MainWindow", "Stop"))
         self.label_7.setText(_translate("MainWindow", "Sampling Rate"))
